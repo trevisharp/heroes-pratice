@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express"
 import { heroesRouter } from "./routes/heroes.router";
+import { openApiDocument } from "./docs/swagger";
 
 dotenv.config();
 
@@ -11,6 +13,12 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/health", (req, res) => res.status(200).end());
+
+app.use(
+    "/docs",
+    swaggerUi.serve,
+    swaggerUi.setup(openApiDocument)
+);
 
 app.use("/heroes", heroesRouter)
 

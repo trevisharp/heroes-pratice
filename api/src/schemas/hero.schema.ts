@@ -34,4 +34,5 @@ export const CreateHeroSchema = z.object({
 	avatar_url: z.url(),
 });
 
+export type HeroDto = z.infer<typeof HeroSchema>;
 export type CreateHeroDto = z.infer<typeof CreateHeroSchema>;

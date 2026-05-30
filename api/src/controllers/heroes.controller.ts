@@ -1,12 +1,13 @@
 import z from "zod";
 import { Request, Response } from "express";
 import { IdempotencyKeySchema } from "../schemas/idempotencyKey.schema";
-import { CreateHeroSchema } from "../schemas/hero.schema";
+import { CreateHeroSchema, UpdateHeroSchema } from "../schemas/hero.schema";
 import { createHeroUseCase } from "../application/useCases/createHeroUseCase";
 import { IdSchema } from "../schemas/id.schema";
 import { getHeroUseCase } from "../application/useCases/getHeroUseCase";
 import { PaginationSchema } from "../schemas/pagination.schema";
 import { getHeroesUseCase } from "../application/useCases/getHeroesUseCases";
+import { editHeroUseCase } from "../application/useCases/editHeroUseCase";
 
 export async function getHeroes(req: Request, res: Response) {
     const queryResult = PaginationSchema.safeParse(req.query);
@@ -114,9 +115,73 @@ export async function createHero(req: Request, res: Response) {
 }
 
 export async function editHero(req: Request, res: Response) {
-    res.status(501).end()
+    const headerResult = IdSchema.safeParse(req.headers);
+    if (!headerResult.success) {
+        return res.status(400).json({
+            error: {
+                code: "VALIDATION_ERROR",
+                fields: z.flattenError(headerResult.error)
+            }
+        });
+    }
+
+    const bodyResult = UpdateHeroSchema.safeParse(req.body);
+    if (!bodyResult.success) {
+        return res.status(400).json({
+            error: {
+                code: "VALIDATION_ERROR",
+                fields: z.flattenError(bodyResult.error)
+            }
+        });
+    }
+
+    const result = await editHeroUseCase({
+        id: headerResult.data.id,
+        hero: bodyResult.data
+    })
+    
+    if (!result.success) {
+        switch (result.error) {
+            case "NOT_FOUND":
+                return res.status(404).end();
+
+            default:
+                return res.status(500).end();
+        }
+    }
+
+    return res
+        .status(200)
+        .json(result.hero);
 }
 
 export async function deleteHero(req: Request, res: Response) {
-    res.status(501).end()
+    const headerResult = IdSchema.safeParse(req.headers);
+    if (!headerResult.success) {
+        return res.status(400).json({
+            error: {
+                code: "VALIDATION_ERROR",
+                fields: z.flattenError(headerResult.error)
+            }
+        });
+    }
+
+    const result = await editHeroUseCase({
+        id: headerResult.data.id,
+        hero: bodyResult.data
+    })
+    
+    if (!result.success) {
+        switch (result.error) {
+            case "NOT_FOUND":
+                return res.status(404).end();
+
+            default:
+                return res.status(500).end();
+        }
+    }
+
+    return res
+        .status(200)
+        .json(result.hero);
 }

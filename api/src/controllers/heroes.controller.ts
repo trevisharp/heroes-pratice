@@ -26,14 +26,16 @@ export async function getHeroes(req: Request, res: Response) {
     })
     
     if (!result.success) {
-        switch (result.error) {
-            case "NOT_MODIFIED":
-                return res.status(304);
-
-            default:
-                return res.status(500);
-        }
+        return res.status(500).end();
     }
+
+    if (result.notModified) {
+        res.setHeader("ETag", result.etag);
+        return res.status(304).end();
+    }
+
+    res.setHeader("ETag", result.etag);
+    res.setHeader("Cache-Control", "public, max-age=900");
 
     return res
         .status(200)
@@ -58,10 +60,10 @@ export async function getHero(req: Request, res: Response) {
     if (!result.success) {
         switch (result.error) {
             case "NOT_FOUND":
-                return res.status(404);
+                return res.status(404).end();
 
             default:
-                return res.status(500);
+                return res.status(500).end();
         }
     }
 
@@ -99,10 +101,10 @@ export async function createHero(req: Request, res: Response) {
     if (!result.success) {
         switch (result.error) {
             case "IDEMPOTENCY_CONFLICT":
-                return res.status(409);
+                return res.status(409).end();
 
             default:
-                return res.status(500);
+                return res.status(500).end();
         }
     }
 

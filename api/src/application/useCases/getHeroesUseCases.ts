@@ -7,8 +7,8 @@ export type GetHeroesRequest = {
 };
 
 export type GetHeroesResponse =
-    { success: true; heroes: HeroesDto; } |
-    { success: false; error: "NOT_MODIFIED"; } |
+    { success: true; notModified: false; heroes: HeroesDto; etag: string; } |
+    { success: true; notModified: true; etag: string; } |
     { success: false; error: "INTERNAL_ERROR"; };
 
 export async function getHeroesUseCase(request: GetHeroesRequest): Promise<GetHeroesResponse> {

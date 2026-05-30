@@ -9,11 +9,11 @@ import { PaginationSchema } from "../schemas/pagination.schema";
 import { buildGetHeroesUseCase } from "../application/useCases/getHeroesUseCases";
 import { buildEditHeroUseCase } from "../application/useCases/editHeroUseCase";
 import { buildDeleteHeroUseCase } from "../application/useCases/deleteHeroUseCase";
-import { heroMockService } from "../infrastructure/heroService/heroMockService";
+import { HeroMockService } from "../infrastructure/heroService/heroMockService";
 import { IdempotencyMockService } from "../infrastructure/idempotencyService/idempotencyMockService";
 
 const deps = {
-    heroService: new heroMockService(),
+    heroService: new HeroMockService(),
     idempotencyService: new IdempotencyMockService()
 }
 

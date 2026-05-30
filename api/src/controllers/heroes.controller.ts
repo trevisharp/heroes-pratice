@@ -3,17 +3,44 @@ import { Request, Response } from "express";
 import { IdempotencyKeySchema } from "../schemas/idempotencyKey.schema";
 import { CreateHeroSchema } from "../schemas/hero.schema";
 import { createHeroUseCase } from "../application/createHeroUseCase";
+import { IdSchema } from "../schemas/id.schema";
+import { getHeroUseCase } from "../application/getHeroUseCase";
 
 export async function getHeroes(req: Request, res: Response) {
     res.status(501).end()
 }
 
 export async function getHero(req: Request, res: Response) {
-    res.status(501).end()
+    const headerResult = IdSchema.safeParse(req.headers);
+    if (!headerResult.success) {
+        return res.status(400).json({
+            error: {
+                code: "VALIDATION_ERROR",
+                fields: z.flattenError(headerResult.error)
+            }
+        });
+    }
+
+    const result = await getHeroUseCase({
+        id: headerResult.data["id"]
+    });
+    
+    if (!result.success) {
+        switch (result.error) {
+            case "NOT_FOUND":
+                return res.status(404);
+
+            default:
+                return res.status(500);
+        }
+    }
+
+    return res
+        .status(201)
+        .json(result.hero);
 }
 
-export async function createHero(req: Request, res: Response) {
-    
+export async function createHero(req: Request, res: Response) { 
     const headerResult = IdempotencyKeySchema.safeParse(req.headers);
     if (!headerResult.success) {
         return res.status(400).json({
@@ -42,20 +69,10 @@ export async function createHero(req: Request, res: Response) {
     if (!result.success) {
         switch (result.error) {
             case "IDEMPOTENCY_CONFLICT":
-                return res.status(409)
-                    .json({
-                        error: {
-                            code: "IDEMPOTENCY_CONFLICT"
-                        }
-                    });
+                return res.status(409);
 
             default:
-                return res.status(500)
-                    .json({
-                        error: {
-                            code: "INTERNAL_ERROR"
-                        }
-                    });
+                return res.status(500);
         }
     }
 

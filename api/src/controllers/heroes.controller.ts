@@ -2,12 +2,42 @@ import z from "zod";
 import { Request, Response } from "express";
 import { IdempotencyKeySchema } from "../schemas/idempotencyKey.schema";
 import { CreateHeroSchema } from "../schemas/hero.schema";
-import { createHeroUseCase } from "../application/createHeroUseCase";
+import { createHeroUseCase } from "../application/useCases/createHeroUseCase";
 import { IdSchema } from "../schemas/id.schema";
-import { getHeroUseCase } from "../application/getHeroUseCase";
+import { getHeroUseCase } from "../application/useCases/getHeroUseCase";
+import { PaginationSchema } from "../schemas/pagination.schema";
+import { getHeroesUseCase } from "../application/useCases/getHeroesUseCases";
 
 export async function getHeroes(req: Request, res: Response) {
-    res.status(501).end()
+    const queryResult = PaginationSchema.safeParse(req.query);
+    if (!queryResult.success) {
+        return res.status(400).json({
+            error: {
+                code: "VALIDATION_ERROR",
+                fields: z.flattenError(queryResult.error)
+            }
+        });
+    }
+
+    const result = await getHeroesUseCase({
+        search: queryResult.data.search,
+        cursor: queryResult.data.cursor,
+        limit: queryResult.data.limit
+    })
+    
+    if (!result.success) {
+        switch (result.error) {
+            case "NOT_MODIFIED":
+                return res.status(304);
+
+            default:
+                return res.status(500);
+        }
+    }
+
+    return res
+        .status(200)
+        .json(result.heroes);
 }
 
 export async function getHero(req: Request, res: Response) {
@@ -22,7 +52,7 @@ export async function getHero(req: Request, res: Response) {
     }
 
     const result = await getHeroUseCase({
-        id: headerResult.data["id"]
+        id: headerResult.data.id
     });
     
     if (!result.success) {
@@ -36,7 +66,7 @@ export async function getHero(req: Request, res: Response) {
     }
 
     return res
-        .status(201)
+        .status(200)
         .json(result.hero);
 }
 

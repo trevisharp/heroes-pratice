@@ -1,4 +1,4 @@
-import { HeroDto } from "../schemas/hero.schema";
+import { HeroDto } from "../../schemas/hero.schema";
 
 export type GetHeroRequest = {
     id: string

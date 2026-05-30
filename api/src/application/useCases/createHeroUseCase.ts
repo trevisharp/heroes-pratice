@@ -1,4 +1,4 @@
-import { CreateHeroDto, HeroDto } from "../schemas/hero.schema";
+import { CreateHeroDto, HeroDto } from "../../schemas/hero.schema";
 
 export type CreateHeroRequest = {
     idempotencyKey?: string;

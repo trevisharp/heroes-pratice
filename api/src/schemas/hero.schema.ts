@@ -35,4 +35,5 @@ export const CreateHeroSchema = z.object({
 });
 
 export type HeroDto = z.infer<typeof HeroSchema>;
+export type HeroesDto = z.infer<typeof HeroesSchema>;
 export type CreateHeroDto = z.infer<typeof CreateHeroSchema>;

@@ -1,15 +1,15 @@
-import { CreateHeroDto, EditHeroDto, HeroDto } from "../../schemas/hero.schema";
+import { EditHeroDto, HeroDto } from "../../schemas/hero.schema";
 
-export type CreateHeroRequest = {
+export type EditHeroRequest = {
     id: string;
     hero: EditHeroDto;
 };
 
-export type CreateHeroResponse =
+export type EditHeroResponse =
     { success: true; hero: HeroDto; } |
     { success: false; error: "NOT_FOUND"; } |
     { success: false; error: "INTERNAL_ERROR"; };
 
-export async function editHeroUseCase(request: CreateHeroRequest): Promise<CreateHeroResponse> {
+export async function editHeroUseCase(request: EditHeroRequest): Promise<EditHeroResponse> {
     throw new Error("Not implemented");
 }

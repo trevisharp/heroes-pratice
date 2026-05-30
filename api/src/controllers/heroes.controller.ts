@@ -8,6 +8,7 @@ import { getHeroUseCase } from "../application/useCases/getHeroUseCase";
 import { PaginationSchema } from "../schemas/pagination.schema";
 import { getHeroesUseCase } from "../application/useCases/getHeroesUseCases";
 import { editHeroUseCase } from "../application/useCases/editHeroUseCase";
+import { deleteHeroUseCase } from "../application/useCases/deleteHeroUseCase";
 
 export async function getHeroes(req: Request, res: Response) {
     const queryResult = PaginationSchema.safeParse(req.query);
@@ -38,9 +39,7 @@ export async function getHeroes(req: Request, res: Response) {
     res.setHeader("ETag", result.etag);
     res.setHeader("Cache-Control", "public, max-age=900");
 
-    return res
-        .status(200)
-        .json(result.heroes);
+    return res.status(200).json(result.heroes);
 }
 
 export async function getHero(req: Request, res: Response) {
@@ -68,9 +67,7 @@ export async function getHero(req: Request, res: Response) {
         }
     }
 
-    return res
-        .status(200)
-        .json(result.hero);
+    return res.status(200).json(result.hero);
 }
 
 export async function createHero(req: Request, res: Response) { 
@@ -109,9 +106,7 @@ export async function createHero(req: Request, res: Response) {
         }
     }
 
-    return res
-        .status(201)
-        .json(result.hero);
+    return res.status(201).json(result.hero);
 }
 
 export async function editHero(req: Request, res: Response) {
@@ -150,9 +145,7 @@ export async function editHero(req: Request, res: Response) {
         }
     }
 
-    return res
-        .status(200)
-        .json(result.hero);
+    return res.status(200).json(result.hero);
 }
 
 export async function deleteHero(req: Request, res: Response) {
@@ -166,9 +159,8 @@ export async function deleteHero(req: Request, res: Response) {
         });
     }
 
-    const result = await editHeroUseCase({
-        id: headerResult.data.id,
-        hero: bodyResult.data
+    const result = await deleteHeroUseCase({
+        id: headerResult.data.id
     })
     
     if (!result.success) {
@@ -181,7 +173,5 @@ export async function deleteHero(req: Request, res: Response) {
         }
     }
 
-    return res
-        .status(200)
-        .json(result.hero);
+    return res.status(200).end();
 }

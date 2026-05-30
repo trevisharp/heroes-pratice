@@ -1,4 +1,5 @@
 import { CreateHeroDto, EditHeroDto, HeroDto } from "../../schemas/hero.schema";
+import { Deps } from "../services/deps";
 
 export type DeleteHeroRequest = {
     id: string;
@@ -9,6 +10,7 @@ export type DeleteHeroResponse =
     { success: false; error: "NOT_FOUND"; } |
     { success: false; error: "INTERNAL_ERROR"; };
 
-export async function deleteHeroUseCase(request: DeleteHeroRequest): Promise<DeleteHeroResponse> {
-    throw new Error("Not implemented");
-}
+export const buildDeleteHeroUseCase = (deps: Deps) => 
+    async (request: DeleteHeroRequest): Promise<DeleteHeroResponse> => {
+        throw new Error("Not implemented");
+    }

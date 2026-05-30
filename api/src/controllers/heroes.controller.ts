@@ -2,13 +2,26 @@ import z from "zod";
 import { Request, Response } from "express";
 import { IdempotencyKeySchema } from "../schemas/idempotencyKey.schema";
 import { CreateHeroSchema, UpdateHeroSchema } from "../schemas/hero.schema";
-import { createHeroUseCase } from "../application/useCases/createHeroUseCase";
+import { buildCreateHeroUseCase } from "../application/useCases/createHeroUseCase";
 import { IdSchema } from "../schemas/id.schema";
-import { getHeroUseCase } from "../application/useCases/getHeroUseCase";
+import { buildGetHeroUseCase } from "../application/useCases/getHeroUseCase";
 import { PaginationSchema } from "../schemas/pagination.schema";
-import { getHeroesUseCase } from "../application/useCases/getHeroesUseCases";
-import { editHeroUseCase } from "../application/useCases/editHeroUseCase";
-import { deleteHeroUseCase } from "../application/useCases/deleteHeroUseCase";
+import { buildGetHeroesUseCase } from "../application/useCases/getHeroesUseCases";
+import { buildEditHeroUseCase } from "../application/useCases/editHeroUseCase";
+import { buildDeleteHeroUseCase } from "../application/useCases/deleteHeroUseCase";
+import { heroMockService } from "../infrastructure/heroService/heroMockService";
+import { IdempotencyMockService } from "../infrastructure/idempotencyService/idempotencyMockService";
+
+const deps = {
+    heroService: new heroMockService(),
+    idempotencyService: new IdempotencyMockService()
+}
+
+const getHeroUseCase = buildGetHeroUseCase(deps)
+const getHeroesUseCase = buildGetHeroesUseCase(deps)
+const createHeroUseCase = buildCreateHeroUseCase(deps)
+const editHeroUseCase = buildEditHeroUseCase(deps)
+const deleteHeroUseCase = buildDeleteHeroUseCase(deps)
 
 export async function getHeroes(req: Request, res: Response) {
     const queryResult = PaginationSchema.safeParse(req.query);

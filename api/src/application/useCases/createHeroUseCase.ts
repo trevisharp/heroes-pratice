@@ -1,4 +1,5 @@
 import { CreateHeroDto, HeroDto } from "../../schemas/hero.schema";
+import { Deps } from "../services/deps";
 
 export type CreateHeroRequest = {
     idempotencyKey?: string;
@@ -10,6 +11,7 @@ export type CreateHeroResponse =
     { success: false; error: "IDEMPOTENCY_CONFLICT"; } |
     { success: false; error: "INTERNAL_ERROR"; };
 
-export async function createHeroUseCase(request: CreateHeroRequest): Promise<CreateHeroResponse> {
-    throw new Error("Not implemented");
-}
+export const buildCreateHeroUseCase = (deps: Deps) => 
+    async (request: CreateHeroRequest): Promise<CreateHeroResponse> => {
+        throw new Error("Not implemented");
+    }

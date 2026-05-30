@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express"
-import { heroesRouter } from "./routes/heroes.router";
+import { heroesRouter } from "./presentation/routes/heroes.router";
 import { openApiDocument } from "./docs/swagger";
 
 dotenv.config();

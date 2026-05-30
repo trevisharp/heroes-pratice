@@ -1,5 +1,5 @@
 import { EditHeroDto, HeroDto } from "../../schemas/hero.schema";
-import { Deps } from "../services/deps";
+import { HeroService } from "../services/hero.service";
 
 export type EditHeroRequest = {
     id: string;
@@ -11,7 +11,7 @@ export type EditHeroResponse =
     { success: false; error: "NOT_FOUND"; } |
     { success: false; error: "INTERNAL_ERROR"; };
 
-export const buildEditHeroUseCase = (deps: Deps) => 
+export const buildEditHeroUseCase = (heroSerice: HeroService) => 
     async (request: EditHeroRequest): Promise<EditHeroResponse> => {
         throw new Error("Not implemented");
     }
